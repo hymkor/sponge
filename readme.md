@@ -17,7 +17,10 @@ $ cat foo.txt
      3 c
      4 d
 ```
-
 (Japanese: 標準入力を全て読み取ってから、その内容を引数のファイルに出力します)
+
+history
+-------
+* 2017.12.14 fix error if target file does not exist.
 
 License: New BSD-License
