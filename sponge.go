@@ -28,7 +28,7 @@ func main() {
 		}
 	}
 
-	buffer := make([]byte,256)
+	buffer := make([]byte, 256)
 	for {
 		n, err := os.Stdin.Read(buffer)
 		if err != nil {
@@ -47,18 +47,16 @@ func main() {
 	}
 	os.Stdin.Close()
 
-	for _,p := range outputList {
+	for _, p := range outputList {
 		p.Fd.Close()
 		err := os.Remove(p.Fname)
-		if err != nil {
-			fmt.Fprintln(os.Stderr,err.Error())
-			os.Remove(p.TmpName)
+		if err != nil && !os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, err.Error())
 			continue
 		}
 		err = os.Rename(p.TmpName, p.Fname)
 		if err != nil {
-			fmt.Fprintln(os.Stderr,err.Error())
-			os.Remove(p.TmpName)
+			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}
 }
