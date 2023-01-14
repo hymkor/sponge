@@ -12,9 +12,9 @@ type OutputT struct {
 	Fname   string
 }
 
-func main() {
-	outputList := make([]*OutputT, 0, len(os.Args)-1)
-	for _, fname := range os.Args[1:] {
+func mains(args []string) error {
+	outputList := make([]*OutputT, 0, len(args))
+	for _, fname := range args {
 		tmpName := fname + ".sponge"
 		fd, err := os.Create(tmpName)
 		if err != nil {
@@ -28,15 +28,14 @@ func main() {
 		}
 	}
 
-	buffer := make([]byte, 256)
 	for {
-		n, err := os.Stdin.Read(buffer)
+		var buffer [256]byte
+		n, err := os.Stdin.Read(buffer[:])
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
-			fmt.Fprintln(os.Stderr, err.Error())
-			return
+			return err
 		}
 		if n == 0 {
 			break
@@ -58,5 +57,13 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
+	}
+	return nil
+}
+
+func main() {
+	if err := mains(os.Args[1:]); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
 	}
 }
