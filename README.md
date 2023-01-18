@@ -19,6 +19,24 @@ $ cat foo.txt
 ```
 (Japanese: 標準入力を全て読み取ってから、その内容を引数のファイルに出力します)
 
+Install
+-------
+
+Download the binary package from [Releases](https://github.com/hymkor/sponge/releases) and extract the executable.
+
+### for scoop-installer
+
+```
+scoop install https://raw.githubusercontent.com/hymkor/sponge/master/sponge.json
+```
+
+or
+
+```
+scoop bucket add hymkor https://github.com/hymkor/scoop-bucket
+scoop install sponge
+```
+
 history
 -------
 
