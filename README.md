@@ -40,8 +40,11 @@ scoop install sponge
 history
 -------
 
-* v0.1.0 - repackaging for the scoop-installer and Change License: BSD-3 to MIT
-* v0.0.2 (2017.12.14) - 2017.12.14 fix error if target file does not exist.
-* v0.0.1 (2016.03.22) - The first version
+* v0.1.0 Jan 15 2023
+    * Repackaging for the scoop-installer and Change License: BSD-3 to MIT
+* v0.0.2 Dec 14 2017
+    * Fix error if target file does not exist
+* v0.0.1 Mar 22 2016
+    * The first version
 
 License: MIT LICENSE
