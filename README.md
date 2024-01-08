@@ -2,7 +2,8 @@ sponge(clone)
 =============
 
 soak up standard input and write to a file.
-([original version](https://joeyh.name/code/moreutils/))
+([original version](https://joeyh.name/code/moreutils/),
+ [my Rust version](https://github.com/hymkor/sponge-rs))
 
 ```
 $ cat foo.txt
