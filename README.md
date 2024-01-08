@@ -40,6 +40,9 @@ scoop install sponge
 history
 -------
 
+* v0.1.1 Jan 08 2024
+    * Prevented copying of the block immediately before EOF from being leaked
+    * Add tests
 * v0.1.0 Jan 15 2023
     * Repackaging for the scoop-installer and Change License: BSD-3 to MIT
 * v0.0.2 Dec 14 2017
