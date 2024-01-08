@@ -12,7 +12,7 @@ type OutputT struct {
 	Fname   string
 }
 
-func mains(args []string) error {
+func mains(in io.Reader, args []string) error {
 	outputList := make([]*OutputT, 0, len(args))
 	for _, fname := range args {
 		tmpName := fname + ".sponge"
@@ -46,7 +46,6 @@ func mains(args []string) error {
 			break
 		}
 	}
-	os.Stdin.Close()
 
 	for _, p := range outputList {
 		p.Fd.Close()
@@ -64,7 +63,7 @@ func mains(args []string) error {
 }
 
 func main() {
-	if err := mains(os.Args[1:]); err != nil {
+	if err := mains(os.Stdin, os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
