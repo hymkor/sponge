@@ -29,19 +29,21 @@ func mains(args []string) error {
 	}
 
 	for {
-		var buffer [256]byte
-		n, err := os.Stdin.Read(buffer[:])
-		if err != nil {
-			if err == io.EOF {
-				break
+		var buffer [4096]byte
+		n, err := in.Read(buffer[:])
+		if err != nil && err != io.EOF {
+			for _, p := range outputList {
+				p.Fd.Close()
 			}
 			return err
 		}
-		if n == 0 {
-			break
+		if n > 0 {
+			for _, p := range outputList {
+				p.Fd.Write(buffer[:n])
+			}
 		}
-		for _, p := range outputList {
-			p.Fd.Write(buffer[:n])
+		if err == io.EOF {
+			break
 		}
 	}
 	os.Stdin.Close()
