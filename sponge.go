@@ -1,9 +1,15 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
+)
+
+var (
+	flagBackupPostfix = flag.String("b", "~", "Postfix for backup of original files")
+	flagTmpPostfix    = flag.String("t", ".sponge", "Postfix for temporary files")
 )
 
 type OutputT struct {
@@ -15,7 +21,7 @@ type OutputT struct {
 func mains(in io.Reader, args []string) error {
 	outputList := make([]*OutputT, 0, len(args))
 	for _, fname := range args {
-		tmpName := fname + ".sponge"
+		tmpName := fname + *flagTmpPostfix
 		fd, err := os.Create(tmpName)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s: %s\n", tmpName, err.Error())
@@ -49,7 +55,8 @@ func mains(in io.Reader, args []string) error {
 
 	for _, p := range outputList {
 		p.Fd.Close()
-		err := os.Remove(p.Fname)
+		backupName := p.Fname + *flagBackupPostfix
+		err := os.Rename(p.Fname, backupName)
 		if err != nil && !os.IsNotExist(err) {
 			fmt.Fprintln(os.Stderr, err.Error())
 			continue
@@ -63,7 +70,8 @@ func mains(in io.Reader, args []string) error {
 }
 
 func main() {
-	if err := mains(os.Stdin, os.Args[1:]); err != nil {
+	flag.Parse()
+	if err := mains(os.Stdin, flag.Args()); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
