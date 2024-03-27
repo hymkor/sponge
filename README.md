@@ -25,7 +25,13 @@ Install
 
 Download the binary package from [Releases](https://github.com/hymkor/sponge/releases) and extract the executable.
 
-### for scoop-installer
+### Use "go install"
+
+```
+go install github.com/hymkor/sponge@latest
+```
+
+### Use "scoop-installer"
 
 ```
 scoop install https://raw.githubusercontent.com/hymkor/sponge/master/sponge.json
