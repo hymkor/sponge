@@ -22,16 +22,15 @@ func mains(in io.Reader, args []string) error {
 	outputList := make([]*OutputT, 0, len(args))
 	for _, fname := range args {
 		tmpName := fname + *flagTmpPostfix
-		fd, err := os.Create(tmpName)
+		fd, err := os.OpenFile(tmpName, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s: %s\n", tmpName, err.Error())
-		} else {
-			outputList = append(outputList, &OutputT{
-				Fd:      fd,
-				TmpName: tmpName,
-				Fname:   fname,
-			})
+			return err
 		}
+		outputList = append(outputList, &OutputT{
+			Fd:      fd,
+			TmpName: tmpName,
+			Fname:   fname,
+		})
 	}
 
 	for {
