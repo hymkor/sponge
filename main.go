@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 )
 
 var (
-	flagBackupPostfix = flag.String("b", "~", "Postfix for backup of original files")
+	flagBackupPostfix = flag.String("b", "", "Postfix for backup of original files")
 	flagTmpPostfix    = flag.String("t", ".sponge", "Postfix for temporary files")
 )
 
@@ -59,7 +60,16 @@ func mains(in io.Reader, args []string) error {
 
 	for _, p := range outputList {
 		p.Fd.Close()
-		backupName := p.Fname + *flagBackupPostfix
+		postfix := *flagBackupPostfix
+		var backupName string
+		if postfix == "" {
+			postfix = time.Now().Format("~20060102_150405~")
+			defer func() {
+				println("rm", backupName)
+				os.Remove(backupName)
+			}()
+		}
+		backupName = p.Fname + postfix
 		err := os.Rename(p.Fname, backupName)
 		if err != nil && !os.IsNotExist(err) {
 			fmt.Fprintln(os.Stderr, err.Error())
