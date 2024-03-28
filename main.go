@@ -10,7 +10,6 @@ import (
 
 var (
 	flagBackupPostfix = flag.String("b", "", "Postfix for backup of original files")
-	flagTmpPostfix    = flag.String("t", ".sponge", "Postfix for temporary files")
 	flagVerbose       = flag.Bool("v", false, "verbose")
 )
 
@@ -34,7 +33,7 @@ func mains(in io.Reader, args []string) error {
 		if err == nil {
 			perm = stat.Mode()
 		}
-		tmpName := fname + *flagTmpPostfix
+		tmpName := fmt.Sprintf("%s-sponge%d", fname, os.Getpid())
 		fd, err := os.OpenFile(tmpName, os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm)
 		if err != nil {
 			return err
