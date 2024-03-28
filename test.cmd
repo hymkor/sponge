@@ -11,7 +11,7 @@ exit /b 0
 :testone
     echo TEST CASE: %*
     %* original.txt > expect.txt
-    %* original.txt | .\sponge original.txt result.txt
+    %* original.txt | .\sponge -v original.txt result.txt
     comp expect.txt original.txt /M || exit /b 1
     comp result.txt original.txt /M || exit /b 2
     del expect.txt result.txt
