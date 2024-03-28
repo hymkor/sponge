@@ -11,6 +11,7 @@ import (
 var (
 	flagBackupPostfix = flag.String("b", "", "Postfix for backup of original files")
 	flagTmpPostfix    = flag.String("t", ".sponge", "Postfix for temporary files")
+	flagVerbose       = flag.Bool("v", false, "verbose")
 )
 
 type OutputT struct {
@@ -20,6 +21,12 @@ type OutputT struct {
 }
 
 func mains(in io.Reader, args []string) error {
+	logger := func(...any) {}
+	if *flagVerbose {
+		logger = func(args ...any) {
+			fmt.Fprintln(os.Stderr, args...)
+		}
+	}
 	outputList := make([]*OutputT, 0, len(args))
 	for _, fname := range args {
 		perm := os.FileMode(0600)
@@ -32,6 +39,8 @@ func mains(in io.Reader, args []string) error {
 		if err != nil {
 			return err
 		}
+		logger("create", tmpName, "with", perm)
+
 		outputList = append(outputList, &OutputT{
 			Fd:      fd,
 			TmpName: tmpName,
@@ -65,16 +74,18 @@ func mains(in io.Reader, args []string) error {
 		if postfix == "" {
 			postfix = time.Now().Format("~20060102_150405~")
 			defer func() {
-				println("rm", backupName)
+				logger("rm", backupName)
 				os.Remove(backupName)
 			}()
 		}
 		backupName = p.Fname + postfix
+		logger("rename", p.Fname, backupName)
 		err := os.Rename(p.Fname, backupName)
 		if err != nil && !os.IsNotExist(err) {
 			fmt.Fprintln(os.Stderr, err.Error())
 			continue
 		}
+		logger("rename", p.TmpName, p.Fname)
 		err = os.Rename(p.TmpName, p.Fname)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
