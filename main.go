@@ -21,8 +21,13 @@ type OutputT struct {
 func mains(in io.Reader, args []string) error {
 	outputList := make([]*OutputT, 0, len(args))
 	for _, fname := range args {
+		perm := os.FileMode(0600)
+		stat, err := os.Stat(fname)
+		if err == nil {
+			perm = stat.Mode()
+		}
 		tmpName := fname + *flagTmpPostfix
-		fd, err := os.OpenFile(tmpName, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+		fd, err := os.OpenFile(tmpName, os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm)
 		if err != nil {
 			return err
 		}
