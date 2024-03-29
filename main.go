@@ -14,9 +14,8 @@ var (
 )
 
 type OutputT struct {
-	Fd      *os.File
-	TmpName string
-	Fname   string
+	tmpFile *LazyFile
+	orgName string
 }
 
 func mains(in io.Reader, args []string) error {
@@ -33,17 +32,13 @@ func mains(in io.Reader, args []string) error {
 		if err == nil {
 			perm = stat.Mode()
 		}
-		tmpName := fmt.Sprintf("%s-sponge%d", fname, os.Getpid())
-		fd, err := os.OpenFile(tmpName, os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm)
-		if err != nil {
-			return err
-		}
-		logger("create", tmpName, "with", perm)
-
 		outputList = append(outputList, &OutputT{
-			Fd:      fd,
-			TmpName: tmpName,
-			Fname:   fname,
+			tmpFile: &LazyFile{
+				Name: fmt.Sprintf("%s-sponge%d", fname, os.Getpid()),
+				Flag: os.O_WRONLY | os.O_CREATE | os.O_EXCL,
+				Perm: perm,
+			},
+			orgName: fname,
 		})
 	}
 
@@ -52,13 +47,13 @@ func mains(in io.Reader, args []string) error {
 		n, err := in.Read(buffer[:])
 		if err != nil && err != io.EOF {
 			for _, p := range outputList {
-				p.Fd.Close()
+				p.tmpFile.Close()
 			}
 			return err
 		}
 		if n > 0 {
 			for _, p := range outputList {
-				p.Fd.Write(buffer[:n])
+				p.tmpFile.Write(buffer[:n])
 			}
 		}
 		if err == io.EOF {
@@ -67,7 +62,7 @@ func mains(in io.Reader, args []string) error {
 	}
 
 	for _, p := range outputList {
-		p.Fd.Close()
+		p.tmpFile.Close()
 		postfix := *flagBackupPostfix
 		var backupName string
 		if postfix == "" {
@@ -77,15 +72,15 @@ func mains(in io.Reader, args []string) error {
 				os.Remove(backupName)
 			}()
 		}
-		backupName = p.Fname + postfix
-		logger("rename", p.Fname, backupName)
-		err := os.Rename(p.Fname, backupName)
+		backupName = p.orgName + postfix
+		logger("rename", p.orgName, backupName)
+		err := os.Rename(p.orgName, backupName)
 		if err != nil && !os.IsNotExist(err) {
 			fmt.Fprintln(os.Stderr, err.Error())
 			continue
 		}
-		logger("rename", p.TmpName, p.Fname)
-		err = os.Rename(p.TmpName, p.Fname)
+		logger("rename", p.tmpFile.Name, p.orgName)
+		err = os.Rename(p.tmpFile.Name, p.orgName)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
