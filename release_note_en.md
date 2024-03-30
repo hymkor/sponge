@@ -5,6 +5,7 @@
 + Now terminates with an error when a file with the same name as a temporary file exists
 + The permission of new files are set same as original files now.
 + Use `(original-name)-sponge(process-id)` as the format for temporary filenames
++ Zero byte files are not created even when errors or interrupts stop
 
 v0.1.1
 =======
