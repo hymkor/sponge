@@ -1,5 +1,5 @@
-sponge(clone)
-=============
+sponge (clone)
+==============
 
 soak up standard input and write to a file.
 ([original version](https://joeyh.name/code/moreutils/),
@@ -44,17 +44,17 @@ scoop bucket add hymkor https://github.com/hymkor/scoop-bucket
 scoop install sponge
 ```
 
-history
--------
+Usage
+-----
 
-* v0.1.1 Jan 08 2024
-    * Prevented copying of the block immediately before EOF from being leaked
-    * Add tests
-* v0.1.0 Jan 15 2023
-    * Repackaging for the scoop-installer and Change License: BSD-3 to MIT
-* v0.0.2 Dec 14 2017
-    * Fix error if target file does not exist
-* v0.0.1 Mar 22 2016
-    * The first version
+`sponge {options} {FILENAME(s)...}`
 
-License: MIT LICENSE
++ `-b string`
+    + Postfix for backup of original files
++ `-v
+    + verbose`
+
+---
+
+[Release Note(English)](./release_note_en.md)
+[Release Note(Japanese)](./release_note_ja.md)
