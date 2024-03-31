@@ -1,3 +1,7 @@
+v0.2.0
+======
+Mar 31, 2024
+
 + Fix error occured on Windows when `cat -n < FILE | sponge FILE` was executed
   because the shell did not close FILE.
   (Just rename once and at least complete the replacement)
