@@ -51,8 +51,10 @@ Usage
 
 + `-b string`
     + Postfix for backup of original files
-+ `-v
-    + verbose`
++ `-v`
+    + Output log to the standard error
++ `-h`
+    + Show this help
 
 ---
 
